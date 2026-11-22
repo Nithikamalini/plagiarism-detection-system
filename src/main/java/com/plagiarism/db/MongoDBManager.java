@@ -47,7 +47,14 @@ public class MongoDBManager {
 
     private void initConnection() {
         try {
-            String connectionString = System.getProperty("mongodb.uri", "mongodb://localhost:27017/?serverSelectionTimeoutMS=2000&connectTimeoutMS=2000");
+            String connectionString = System.getenv("MONGODB_URI");
+            if (connectionString == null || connectionString.trim().isEmpty()) {
+                connectionString = System.getenv("mongodb.uri");
+            }
+            if (connectionString == null || connectionString.trim().isEmpty()) {
+                connectionString = System.getProperty("mongodb.uri", "mongodb://localhost:27017/?serverSelectionTimeoutMS=2000&connectTimeoutMS=2000");
+            }
+
             mongoClient = MongoClients.create(connectionString);
             database = mongoClient.getDatabase("plagiarism_db");
 

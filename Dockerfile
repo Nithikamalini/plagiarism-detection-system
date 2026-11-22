@@ -23,7 +23,4 @@ COPY src/main/resources/ src/main/resources/
 
 EXPOSE 8080
 
-ENV PORT=8080
-ENV mongodb.uri=mongodb://mongo:27017/plagiarism_db
-
-ENTRYPOINT ["java", "-cp", "bin:lib/*", "com.plagiarism.PlagiarismApplication", "8080"]
+CMD ["sh", "-c", "java -cp bin:lib/* com.plagiarism.PlagiarismApplication ${PORT:-8080}"]

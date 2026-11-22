@@ -304,3 +304,5 @@ java -cp "bin;lib/*" com.plagiarism.PlagiarismEngineTest
 
 ## 📜 License
 Educational and Academic Use • Developed for Plagiarism Detection System Project.
+#   p l a g i a r i s m - d e t e c t i o n - s y s t e m  
+ 

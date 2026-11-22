@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0"
 title Share Public URL (Cloudflare Tunnel)
 echo =================================================================
 echo   GENERATING INSTANT PUBLIC URL FOR YOUR PLAGIARISM SYSTEM

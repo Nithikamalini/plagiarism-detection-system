@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0"
 title Plagiarism Detection System
 echo =================================================================
 echo        PLAGIARISM DETECTION SYSTEM (Java ^& MongoDB)

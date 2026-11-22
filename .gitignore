@@ -4,6 +4,7 @@ data/
 *.lock
 *.bson
 *.log
+cloudflared.exe
 
 # Build tools & temporary maven directories
 apache-maven-3.9.11/

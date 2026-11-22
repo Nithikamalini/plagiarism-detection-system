@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Plagiarism Detection System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">🔍</div>
+        <div class="brand-title">Plagio<span>Guard</span></div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+        <li><a href="scan.html" class="nav-link">Check Text</a></li>
+        <li><a href="corpus.html" class="nav-link">Corpus</a></li>
+        <li><a href="history.html" class="nav-link">History</a></li>
+      </ul>
+      <div id="nav-user-container"></div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 36px; padding-bottom: 60px;">
+    <!-- Welcome Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 700;">Welcome, <span id="user-greeting">Alex</span></h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Monitor document plagiarism, manage reference archives, and review similarity metrics.</p>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <span id="mongo-status" class="badge badge-low">Checking Database...</span>
+        <a href="scan.html" class="btn btn-primary">➕ New Plagiarism Check</a>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(79, 70, 229, 0.2); color: #818cf8;">📄</div>
+        <div class="stat-info">
+          <div class="stat-value" id="stat-total-scans">0</div>
+          <div class="stat-label">Total Documents Scanned</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8;">📊</div>
+        <div class="stat-info">
+          <div class="stat-value" id="stat-avg-similarity">0%</div>
+          <div class="stat-label">Average Similarity Score</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">📚</div>
+        <div class="stat-info">
+          <div class="stat-value" id="stat-corpus-docs">0</div>
+          <div class="stat-label">Reference Corpus Documents</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">⚠️</div>
+        <div class="stat-info">
+          <div class="stat-value" id="stat-flagged-docs">0</div>
+          <div class="stat-label">Flagged High / Medium Risks</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backend Server Status Card -->
+    <div class="card" style="margin-bottom: 30px; border-left: 4px solid var(--secondary);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+        <h3 style="font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">
+          <span>🖥️</span> Backend Server Diagnostics & System Monitor
+        </h3>
+        <span id="server-status-pill" class="badge badge-low">Checking Server...</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; font-size: 0.9rem;">
+        <div><span style="color:var(--text-muted);">Server Port:</span> <strong id="srv-port">8080</strong></div>
+        <div><span style="color:var(--text-muted);">Uptime:</span> <strong id="srv-uptime">00h 00m 00s</strong></div>
+        <div><span style="color:var(--text-muted);">JVM Memory:</span> <strong id="srv-memory">0 MB / 0 MB</strong></div>
+        <div><span style="color:var(--text-muted);">Database:</span> <strong id="srv-db">plagiarism_db</strong></div>
+        <div><span style="color:var(--text-muted);">Active Threads:</span> <strong id="srv-threads">0</strong></div>
+        <div><span style="color:var(--text-muted);">Java Runtime:</span> <strong id="srv-java">17</strong></div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Banner -->
+    <div class="card" style="margin-bottom: 30px; background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95));">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h3 style="font-size: 1.2rem; margin-bottom: 6px;">Need to check a document or compare two assignments?</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Upload files or paste text to perform real-time N-Gram analysis and Cosine vector calculations.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <a href="scan.html" class="btn btn-primary">Start Plagiarism Scan</a>
+          <a href="corpus.html" class="btn btn-outline">Explore Corpus</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Scans Table -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="font-size: 1.25rem;">Recent Plagiarism Scans</h2>
+        <a href="history.html" class="btn btn-outline btn-sm">View Full History</a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Overall Plagiarism</th>
+              <th>Algorithm Breakdown</th>
+              <th>Top Matching Source</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="recent-scans-body">
+            <tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:30px;">Loading scans...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">Plagiarism Detection System &copy; 2026 • Java 17 & MongoDB</div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

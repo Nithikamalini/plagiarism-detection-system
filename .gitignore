@@ -1,0 +1,23 @@
+# Database & runtime data
+data/
+*.wt
+*.lock
+*.bson
+*.log
+
+# Build tools & temporary maven directories
+apache-maven-3.9.11/
+.m2repo/
+target/
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS files
+Thumbs.db
+.DS_Store

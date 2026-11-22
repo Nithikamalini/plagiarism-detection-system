@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plagiarism Analysis Report | PlagioGuard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">🔍</div>
+        <div class="brand-title">Plagio<span>Guard</span></div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="scan.html" class="nav-link">Check Text</a></li>
+        <li><a href="corpus.html" class="nav-link">Corpus</a></li>
+        <li><a href="history.html" class="nav-link">History</a></li>
+      </ul>
+      <div id="nav-user-container"></div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 36px; padding-bottom: 60px;" id="report-container">
+    
+    <!-- Report Top Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <h1 style="font-size: 1.85rem; font-weight: 700;" id="report-doc-title">Analyzing Report...</h1>
+          <span style="font-size: 0.85rem; color: var(--text-muted); font-family: monospace;" id="report-id"></span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Analysis completed on <span id="report-timestamp"></span>
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-primary btn-sm" onclick="openPrintableReport()">🖨️ PDF / Print</button>
+        <button class="btn btn-outline btn-sm" onclick="downloadCsvReport()">📊 Export CSV</button>
+        <button class="btn btn-outline btn-sm" onclick="downloadTxtReport()">📝 Export TXT</button>
+        <button class="btn btn-outline btn-sm" onclick="downloadJsonReport()">💾 JSON</button>
+        <a href="scan.html" class="btn btn-secondary btn-sm">New Scan</a>
+      </div>
+    </div>
+
+    <!-- Gauge & Metrics Overview Card -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div style="display: grid; grid-template-columns: 260px 1fr; gap: 30px; align-items: center;">
+        
+        <!-- Animated Circular Gauge -->
+        <div class="gauge-container">
+          <div class="circular-gauge">
+            <svg viewBox="0 0 160 160">
+              <circle class="gauge-bg" cx="80" cy="80" r="70"></circle>
+              <circle id="gauge-progress" class="gauge-fill" cx="80" cy="80" r="70"></circle>
+            </svg>
+            <div class="gauge-value">
+              <div class="gauge-num" id="gauge-score-num">0%</div>
+              <div class="gauge-sub">Plagiarism</div>
+            </div>
+          </div>
+          <div style="margin-top: 12px;">
+            <span id="gauge-level-badge" class="badge badge-low">LOW SIMILARITY</span>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 16px;">Algorithmic Similarity Breakdown</h3>
+          <div class="stats-grid" style="margin-bottom: 0;">
+            
+            <div class="stat-card" style="padding: 16px;">
+              <div class="stat-info">
+                <div class="stat-value" id="metric-cosine" style="color: #818cf8; font-size: 1.6rem;">0%</div>
+                <div class="stat-label">Cosine Similarity (TF Vector Space)</div>
+              </div>
+            </div>
+
+            <div class="stat-card" style="padding: 16px;">
+              <div class="stat-info">
+                <div class="stat-value" id="metric-ngram" style="color: #38bdf8; font-size: 1.6rem;">0%</div>
+                <div class="stat-label">N-Gram Containment (3-Gram Overlap)</div>
+              </div>
+            </div>
+
+            <div class="stat-card" style="padding: 16px;">
+              <div class="stat-info">
+                <div class="stat-value" id="metric-total-words" style="font-size: 1.6rem;">0</div>
+                <div class="stat-label">Total Words Analyzed</div>
+              </div>
+            </div>
+
+            <div class="stat-card" style="padding: 16px;">
+              <div class="stat-info">
+                <div class="stat-value" id="metric-matched-words" style="color: #f87171; font-size: 1.6rem;">0</div>
+                <div class="stat-label">Copied / Overlapping Words</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Side-by-Side Synchronized Comparison View -->
+    <div style="margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+        <h2 style="font-size: 1.3rem;">Synchronized Text Comparison & Visual Highlighting</h2>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <button id="toggle-expand-btn" class="btn btn-outline btn-sm" onclick="toggleExpandPanels()">↕️ Expand Full Height (Show All Data)</button>
+          <div style="display: flex; gap: 8px; font-size: 0.8rem;">
+            <span class="plag-highlight match-exact" style="padding: 2px 8px;">Exact Match (&ge;80%)</span>
+            <span class="plag-highlight match-high" style="padding: 2px 8px;">High Match (60-79%)</span>
+            <span class="plag-highlight match-moderate" style="padding: 2px 8px;">Moderate Match (45-59%)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="comparison-grid">
+        <!-- Left: Submitted Document -->
+        <div class="comparison-box">
+          <div class="comparison-header">
+            <span>📄 Submitted Document (Analyzed Input)</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Original Text</span>
+          </div>
+          <div class="comparison-body" id="highlighted-source">
+            Loading document...
+          </div>
+        </div>
+
+        <!-- Right: Matched Reference Document -->
+        <div class="comparison-box">
+          <div class="comparison-header">
+            <span id="matched-doc-header-title">📚 Top Matched Reference Document</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Corpus Archive</span>
+          </div>
+          <div class="comparison-body" id="highlighted-matched">
+            Loading matching text...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Specific Matching Snippets List -->
+    <div class="card" style="margin-bottom: 24px;">
+      <h3 style="font-size: 1.15rem; margin-bottom: 14px;">Identified Matching Content Snippets</h3>
+      <div id="matched-segments-list">
+        <p style="color: var(--text-muted);">No matching snippets.</p>
+      </div>
+    </div>
+
+    <!-- Reference Documents Comparison Breakdown -->
+    <div class="card">
+      <h3 style="font-size: 1.15rem; margin-bottom: 14px;">Corpus Reference Documents Comparison Breakdown</h3>
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Reference Document Title</th>
+              <th>Overall Match %</th>
+              <th>Cosine Score</th>
+              <th>N-Gram Score</th>
+              <th>Identified Matches</th>
+            </tr>
+          </thead>
+          <tbody id="breakdown-tbody">
+            <tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">Loading breakdown...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">Plagiarism Detection System &copy; 2026 • Java 17 & MongoDB</div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/result.js"></script>
+</body>
+</html>

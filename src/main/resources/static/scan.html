@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plagiarism Checker | PlagioGuard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">🔍</div>
+        <div class="brand-title">Plagio<span>Guard</span></div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="scan.html" class="nav-link active">Check Text</a></li>
+        <li><a href="corpus.html" class="nav-link">Corpus</a></li>
+        <li><a href="history.html" class="nav-link">History</a></li>
+      </ul>
+      <div id="nav-user-container"></div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 36px; padding-bottom: 60px;">
+    <!-- Title & Mode Tabs -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 700;">Plagiarism Inspection Studio</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Analyze text similarity using N-Gram token analysis and Vector Space Cosine Similarity against MongoDB.
+        </p>
+      </div>
+
+      <!-- Mode Selector -->
+      <div style="display: flex; background: var(--bg-card); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+        <button id="tab-corpus" class="btn btn-outline btn-sm active" style="border:none;">
+          📚 Check Against Database Corpus
+        </button>
+        <button id="tab-direct" class="btn btn-outline btn-sm" style="border:none;">
+          ⚖️ Compare Two Documents (Doc A vs Doc B)
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Sample Loaders -->
+    <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;">
+      <span style="font-size: 0.85rem; color: var(--text-muted);">Quick Test Presets:</span>
+      <button type="button" class="btn btn-outline btn-sm" onclick="loadSample('plagiarized')">
+        ⚠️ Load Copied Sample (AI Essay)
+      </button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="loadSample('original')">
+        ✅ Load Safe Original Sample
+      </button>
+    </div>
+
+    <!-- Document Input Form Card -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="form-group">
+        <label class="form-label" for="docTitle">Document Title</label>
+        <input type="text" id="docTitle" class="form-control" placeholder="e.g., Assignment 1 - Distributed Systems Review">
+      </div>
+
+      <!-- File Upload Dropzone -->
+      <div class="form-group">
+        <label class="form-label">Upload Document File (Word, PDF, Image, or Text)</label>
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-icon">📁</div>
+          <p style="font-weight: 600; font-size: 1rem; margin-bottom: 4px;">Click to browse or drag & drop document here</p>
+          <p style="color: var(--secondary); font-size: 0.85rem; font-weight: 600;">Supports PDF (.pdf), Word (.docx, .doc), Images (.png, .jpg OCR), and Text (.txt, .md)</p>
+          <input type="file" id="fileInput" accept=".txt,.pdf,.docx,.doc,.png,.jpg,.jpeg,.md,.json,.csv,*">
+        </div>
+        <div id="file-loading-indicator" style="display:none; margin-top:10px; background:rgba(79,70,229,0.15); border:1px solid var(--primary); border-radius:var(--radius-sm); padding:12px; font-size:0.9rem; color:#818cf8;">
+          <span class="spinner">⏳</span> <span id="file-loading-text">Extracting text from file...</span>
+        </div>
+        <div id="file-preview-card" style="display:none; margin-top:12px; background:rgba(15,23,42,0.8); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; display:flex; align-items:center; gap:14px;">
+          <img id="image-thumbnail" style="display:none; max-width:70px; max-height:70px; border-radius:4px; object-fit:cover; border:1px solid var(--border);" alt="Preview">
+          <div style="flex:1;">
+            <div style="font-weight:600; color:#fff;" id="file-info-name">document.docx</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">
+              <span id="file-info-type">Word Document</span> • <span id="file-info-size">0 KB</span> • <span id="file-info-words" style="color:#34d399; font-weight:600;">0 words extracted</span>
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="clearUploadedFile()">Remove</button>
+        </div>
+      </div>
+
+      <!-- Text Area Input -->
+      <div class="form-group" style="margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label class="form-label" for="inputText" style="margin-bottom: 0;">Or Paste Document Content Directly</label>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">
+            <span id="word-count">0 words</span> • <span id="char-count">0 chars</span>
+          </div>
+        </div>
+        <textarea id="inputText" class="form-control" placeholder="Paste or type document text here to check for copied content..."></textarea>
+      </div>
+
+      <!-- Save to Corpus Checkbox -->
+      <div style="margin-top: 14px; display: flex; align-items: center; gap: 10px;">
+        <input type="checkbox" id="saveToCorpus" style="width: 18px; height: 18px; cursor: pointer;">
+        <label for="saveToCorpus" style="font-size: 0.9rem; color: var(--text-main); cursor: pointer;">
+          Permanently save this document to the MongoDB reference corpus for future comparisons
+        </label>
+      </div>
+    </div>
+
+    <!-- Direct Comparison Section (Doc B) - Hidden by default -->
+    <div id="direct-compare-section" class="card" style="display: none; margin-bottom: 24px; border-left: 4px solid var(--secondary);">
+      <h3 style="font-size: 1.2rem; margin-bottom: 16px; color: var(--secondary);">
+        Second Document (Reference to Compare Against)
+      </h3>
+
+      <div class="form-group">
+        <label class="form-label" for="directTitle">Reference Document Title</label>
+        <input type="text" id="directTitle" class="form-control" placeholder="e.g., Original Student Submission B">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Upload Reference Document (Word, PDF, Image, or Text)</label>
+        <div class="dropzone" id="direct-dropzone">
+          <div class="dropzone-icon">📄</div>
+          <p style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Click or drag Reference Document here</p>
+          <p style="color: var(--secondary); font-size: 0.8rem; font-weight:600;">Supports PDF (.pdf), Word (.docx), Images (.png, .jpg), and Text (.txt, .md)</p>
+          <input type="file" id="directFileInput" accept=".txt,.pdf,.docx,.doc,.png,.jpg,.jpeg,.md,.json,.csv,*">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label class="form-label" for="directText" style="margin-bottom: 0;">Or Paste Reference Document Content</label>
+          <div style="font-size: 0.85rem; color: var(--text-muted);"><span id="direct-word-count">0 words</span></div>
+        </div>
+        <textarea id="directText" class="form-control" placeholder="Paste reference text to compare against Document A..."></textarea>
+      </div>
+    </div>
+
+    <!-- Submit Action Button -->
+    <div style="text-align: center; margin-top: 30px;">
+      <button id="scanBtn" class="btn btn-primary btn-lg" onclick="startScan()" style="min-width: 280px;">
+        🔍 Run Plagiarism Detection
+      </button>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 10px;">
+        Calculates N-Gram overlap, builds Term-Frequency vectors, and identifies matching sentences.
+      </p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">Plagiarism Detection System &copy; 2026 • Java 17 & MongoDB</div>
+  </footer>
+
+  <!-- PDF, Word DOCX & Image OCR Text Extraction Engines -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <script src="js/api.js"></script>
+  <script src="js/scan.js"></script>
+</body>
+</html>

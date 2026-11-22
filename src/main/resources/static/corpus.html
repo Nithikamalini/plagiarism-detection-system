@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reference Document Corpus | PlagioGuard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">🔍</div>
+        <div class="brand-title">Plagio<span>Guard</span></div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="scan.html" class="nav-link">Check Text</a></li>
+        <li><a href="corpus.html" class="nav-link active">Corpus</a></li>
+        <li><a href="history.html" class="nav-link">History</a></li>
+      </ul>
+      <div id="nav-user-container"></div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 36px; padding-bottom: 60px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 700;">Reference Document Corpus</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          These documents are stored in the MongoDB collection <code style="color:var(--secondary);">documents</code> and form the comparison base during plagiarism checks.
+        </p>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <span id="corpus-count" class="badge badge-low">0 documents</span>
+        <button class="btn btn-primary" onclick="openModal()">➕ Add Reference Document</button>
+      </div>
+    </div>
+
+    <!-- Document List Container -->
+    <div id="corpus-docs-list">
+      <p style="color: var(--text-muted); text-align: center; padding: 40px;">Loading reference corpus from MongoDB...</p>
+    </div>
+  </main>
+
+  <!-- View Document Modal (Shows ALL Data) -->
+  <div class="modal-overlay" id="view-modal">
+    <div class="modal-content" style="max-width: 800px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size: 1.25rem;" id="view-doc-title">Document Title</h3>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+            <span id="view-doc-cat" class="badge badge-low">Category</span>
+            <span id="view-doc-words" style="margin-left: 8px;">0 words</span>
+            <span id="view-doc-id" style="margin-left: 8px; font-family: monospace;">ID</span>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeViewModal()">&times;</button>
+      </div>
+      <div style="overflow-y: auto; flex: 1; margin: 15px 0; background: rgba(15,23,42,0.8); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px; line-height: 1.8; color: #e2e8f0; font-size: 0.95rem; white-space: pre-wrap;" id="view-doc-body">
+        Loading document content...
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="copyDocumentText()">📋 Copy Full Text</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeViewModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Document Modal -->
+  <div class="modal-overlay" id="add-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="font-size: 1.25rem;">Add Document to Reference Corpus</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="add-doc-form" onsubmit="addCorpusDoc(event)">
+        <div class="form-group">
+          <label class="form-label" for="new-doc-file">Or Upload File (Word, PDF, Image, Text)</label>
+          <input type="file" id="new-doc-file" class="form-control" accept=".txt,.pdf,.docx,.doc,.png,.jpg,.jpeg,.md,.csv,*" onchange="handleCorpusFileUpload(event)">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-doc-title">Document Title</label>
+          <input type="text" id="new-doc-title" class="form-control" placeholder="e.g. Distributed Consensus in Raft" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-doc-category">Category / Subject</label>
+          <input type="text" id="new-doc-category" class="form-control" placeholder="e.g. Computer Science, Physics, Law" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-doc-content">Full Text Content</label>
+          <textarea id="new-doc-content" class="form-control" placeholder="Paste full reference text here..." style="min-height: 200px;" required></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save to MongoDB</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">Plagiarism Detection System &copy; 2026 • Java 17 & MongoDB</div>
+  </footer>
+
+  <!-- PDF & Word Extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <script src="js/api.js"></script>
+  <script src="js/corpus.js"></script>
+</body>
+</html>

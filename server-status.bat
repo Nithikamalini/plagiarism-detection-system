@@ -1,0 +1,6 @@
+@echo off
+title Backend Server Status
+
+powershell -Command "$status = try { Invoke-RestMethod -Uri 'http://localhost:8080/api/system/status' -Method Get -TimeoutSec 2 } catch { $null }; if ($status) { Write-Host '==================================================' -ForegroundColor Green; Write-Host '  BACKEND SERVER: ONLINE (Port ' $status.port ')' -ForegroundColor Green; Write-Host '==================================================' -ForegroundColor Green; Write-Host '  Uptime:         ' $status.uptime; Write-Host '  Memory (JVM):   ' $status.usedMemoryMB 'MB used / ' $status.totalMemoryMB 'MB total'; Write-Host '  MongoDB:        ' (if ($status.mongoConnected) {'Connected (localhost:27017)'} else {'Memory Cache Mode'}); Write-Host '  Total Scans:    ' $status.totalScans; Write-Host '  Corpus Docs:    ' $status.corpusCount; Write-Host '  Java Version:   ' $status.javaVersion; Write-Host '==================================================' -ForegroundColor Green; } else { Write-Host '==================================================' -ForegroundColor Red; Write-Host '  BACKEND SERVER: OFFLINE (Port 8080 unreachable)' -ForegroundColor Red; Write-Host '==================================================' -ForegroundColor Red; Write-Host 'Start it by double-clicking run.bat or start-background.bat'; }"
+
+pause

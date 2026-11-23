@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compile Java Sources",
+      "type": "shell",
+      "command": "powershell -Command \"javac --release 17 -encoding UTF-8 -cp 'bin;lib/*' -d bin (Get-ChildItem -Path src/main/java -Recurse -Filter *.java | Select-Object -ExpandProperty FullName)\"",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Server (run.bat)",
+      "type": "shell",
+      "command": ".\\run.bat",
+      "problemMatcher": []
+    }
+  ]
+}

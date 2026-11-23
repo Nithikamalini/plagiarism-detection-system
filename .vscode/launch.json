@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "🚀 Run Plagiarism System (Port 8080)",
+      "request": "launch",
+      "mainClass": "com.plagiarism.PlagiarismApplication",
+      "args": "8080",
+      "projectName": "plagiarism-detection-system",
+      "classPaths": [
+        "${workspaceFolder}/bin",
+        "${workspaceFolder}/lib/*"
+      ]
+    },
+    {
+      "type": "java",
+      "name": "🧪 Run Algorithm Tests",
+      "request": "launch",
+      "mainClass": "com.plagiarism.PlagiarismEngineTest",
+      "classPaths": [
+        "${workspaceFolder}/bin",
+        "${workspaceFolder}/lib/*"
+      ]
+    }
+  ]
+}
